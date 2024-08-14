@@ -12,22 +12,7 @@ const videoFileMap ={
     ,'isekaimp4':'Isekai Suicide Squad - 05 (BS11 1920x1080 x264 AAC).mp4'
 }
 
-app.use(cors());
-const corsOptions = {
-    origin: 'https://www.antares.ninja/',//(https://your-client-app.com)
-    optionsSuccessStatus: 200,
-  };
- 
-  app.use(cors(corsOptions));
-
-  app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", 'GET,PUT,POST,DELETE');
-    app.use(cors());
-    next();
-});
-
-app.get('/videos/:filename', cors(corsOptions), ( req, res)=>{
+app.get('/videos/:filename', cors(), ( req, res)=>{
     const filename = req.params.filename;
     const filePath = "videos/"+[filename];
     if(!filePath){
@@ -64,7 +49,7 @@ app.get('/videos/:filename', cors(corsOptions), ( req, res)=>{
     }
 })
 
-app.get('/mkv-videos/:filename', cors(corsOptions), ( req, res)=>{
+app.get('/mkv-videos/:filename', cors(), ( req, res)=>{
     const filename = req.params.filename;
     const filePath = "videos/"+[filename];
     if(!filePath){
@@ -101,7 +86,7 @@ app.get('/mkv-videos/:filename', cors(corsOptions), ( req, res)=>{
     }
 })
 
-app.get('/videoFiles', cors(corsOptions), ( req, res)=>{
+app.get('/videoFiles', cors(), ( req, res)=>{
     const head = {
         'Content-Type':'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -114,7 +99,7 @@ app.get('/videoFiles', cors(corsOptions), ( req, res)=>{
     return res.send(files);
 })
 
-app.get('/musicFiles', cors(corsOptions), ( req, res)=>{
+app.get('/musicFiles', cors(), ( req, res)=>{
     const head = {
         'Content-Type':'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -127,7 +112,7 @@ app.get('/musicFiles', cors(corsOptions), ( req, res)=>{
     return res.send(files);
 })
 
-app.get('/music/:filename', cors(corsOptions), ( req, res)=>{
+app.get('/music/:filename', cors(), ( req, res)=>{
     const filename = req.params.filename;
     const filePath = "music/"+[filename];
     if(!filePath){
