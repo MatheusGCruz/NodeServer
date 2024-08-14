@@ -20,6 +20,13 @@ const corsOptions = {
  
   app.use(cors(corsOptions));
 
+  app.use((req, res, next) => {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", 'GET,PUT,POST,DELETE');
+    app.use(cors());
+    next();
+});
+
 app.get('/videos/:filename', cors(corsOptions), ( req, res)=>{
     const filename = req.params.filename;
     const filePath = "videos/"+[filename];
