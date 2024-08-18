@@ -15,7 +15,7 @@ const videoFileMap ={
 app.get('/videos/:filename', cors(), ( req, res)=>{
     const filename = req.params.filename;
     const filePath = "videos/"+[filename];
-    if(!filename || !filePath || !filename == 'null'){
+    if(!filename || !filePath || filename == 'null'){
         return res.status(404).send('Not Found')
     }
 
@@ -52,7 +52,7 @@ app.get('/videos/:filename', cors(), ( req, res)=>{
 app.get('/mkv-videos/:filename', cors(), ( req, res)=>{
     const filename = req.params.filename;
     const filePath = "videos/"+[filename];
-    if(!filename || !filePath || !filename == 'null'){
+    if(!filename || !filePath || filename == 'null'){
         return res.status(404).send('Not Found')
     }
 
@@ -115,7 +115,7 @@ app.get('/musicFiles', cors(), ( req, res)=>{
 app.get('/music/:filename', cors(), ( req, res)=>{
     const filename = req.params.filename;
     const filePath = "music/"+[filename];
-    if(!filename || !filePath || !filename == 'null'){
+    if(!filename || !filePath || filename == 'null'){
         return res.status(404).send('Not Found')
     }
 
