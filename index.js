@@ -1,16 +1,12 @@
+var sqlFunctions = require("./functions/sqlFunctions")
+
 const express = require('express')
 const fs = require('fs')
 const cors = require('cors')
 
 const app = express()
 
-const videoFileMap ={
-    'chacara':'videos/chacara.mp4',
-    'teste':'videos/teste.mp4',
-    'cachorros':'videos/cachorros.mp4',
-    'isekai':'videos/isekai.mkv'
-    ,'isekaimp4':'Isekai Suicide Squad - 05 (BS11 1920x1080 x264 AAC).mp4'
-}
+
 
 app.get('/videos/:filename', cors(), ( req, res)=>{
     const filename = req.params.filename;
@@ -87,11 +83,6 @@ app.get('/mkv-videos/:filename', cors(), ( req, res)=>{
 })
 
 app.get('/videoFiles', cors(), ( req, res)=>{
-    const head = {
-        'Content-Type':'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers':'X-Requested-With'
-    };
     const files = fs.readdirSync('videos/');
     res.setHeader('Content-Type','application/json');
     res.setHeader('Access-Control-Allow-Origin','*');
@@ -99,12 +90,15 @@ app.get('/videoFiles', cors(), ( req, res)=>{
     return res.send(files);
 })
 
+app.get('/book/:bookname', cors(), ( req, res)=>{
+    const book = sqlFunctions.searchBook(req.params.bookname);
+    res.setHeader('Content-Type','application/json');
+    res.setHeader('Access-Control-Allow-Origin','*');
+    res.setHeader('Access-Control-Allow-Headers','X-Requested-With');
+    return res.send(book);
+})
+
 app.get('/musicFiles', cors(), ( req, res)=>{
-    const head = {
-        'Content-Type':'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Access-Control-Allow-Headers':'X-Requested-With'
-    };
     const files = fs.readdirSync('music/');
     res.setHeader('Content-Type','application/json');
     res.setHeader('Access-Control-Allow-Origin','*');
