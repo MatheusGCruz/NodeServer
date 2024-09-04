@@ -1,10 +1,18 @@
 var sqlFunctions = require("./functions/sqlFunctions")
+const getDataConfig = require('./dataFunctions/dataConfig')
+const { dataAccess } = require('./dataFunctions/dataAccess')
 
 const express = require('express')
 const fs = require('fs')
 const cors = require('cors')
 
 const app = express()
+
+const dataConfig = getDataConfig()
+
+app.locals.db = {
+    vbook: dataAccess(dataConfig.vbook)
+}
 
 
 
@@ -90,11 +98,14 @@ app.get('/videoFiles', cors(), ( req, res)=>{
     return res.send(files);
 })
 
-app.get('/book/:bookname', cors(), ( req, res)=>{
-    const book = sqlFunctions.searchBook(req.params.bookname);
+app.get('/book/:bookname', cors(), async ( req, res)=>{
+    const book = await sqlFunctions.searchBook(req);
     res.setHeader('Content-Type','application/json');
     res.setHeader('Access-Control-Allow-Origin','*');
     res.setHeader('Access-Control-Allow-Headers','X-Requested-With');
+    //const command = 'SELECT * FROM [NODE_SERVER].[dbo].[VBOOK]';
+    console.log(book);
+    
     return res.send(book);
 })
 
