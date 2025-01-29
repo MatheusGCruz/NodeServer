@@ -18,7 +18,7 @@ app.locals.db = {
 
 app.get('/videos/:filename', cors(), ( req, res)=>{
     const filename = req.params.filename;
-    const filePath = "videos/"+[filename];
+    const filePath = "E:/Videos/"+[filename];
     if(!filename || !filePath || filename == 'null'){
         return res.status(404).send('Not Found')
     }
@@ -55,7 +55,7 @@ app.get('/videos/:filename', cors(), ( req, res)=>{
 
 app.get('/mkv-videos/:filename', cors(), ( req, res)=>{
     const filename = req.params.filename;
-    const filePath = "videos/"+[filename];
+    const filePath = "E:/Videos/"+[filename];
     if(!filename || !filePath || filename == 'null'){
         return res.status(404).send('Not Found')
     }
@@ -91,7 +91,7 @@ app.get('/mkv-videos/:filename', cors(), ( req, res)=>{
 })
 
 app.get('/videoFiles', cors(), ( req, res)=>{
-    const files = fs.readdirSync('videos/');
+    const files = fs.readdirSync('E:/Videos/');
     res.setHeader('Content-Type','application/json');
     res.setHeader('Access-Control-Allow-Origin','*');
     res.setHeader('Access-Control-Allow-Headers','X-Requested-With');
@@ -110,7 +110,7 @@ app.get('/book/:bookname', cors(), async ( req, res)=>{
 })
 
 app.get('/musicFiles', cors(), ( req, res)=>{
-    const files = fs.readdirSync('music/');
+    const files = fs.readdirSync('E:/Music/');
     res.setHeader('Content-Type','application/json');
     res.setHeader('Access-Control-Allow-Origin','*');
     res.setHeader('Access-Control-Allow-Headers','X-Requested-With');
@@ -119,7 +119,7 @@ app.get('/musicFiles', cors(), ( req, res)=>{
 
 app.get('/music/:filename', cors(), ( req, res)=>{
     const filename = req.params.filename;
-    const filePath = "music/"+[filename];
+    const filePath = "E:/Music/"+[filename];
     if(!filename || !filePath || filename == 'null'){
         return res.status(404).send('Not Found')
     }
