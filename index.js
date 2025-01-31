@@ -103,9 +103,16 @@ app.get('/book/:bookname', cors(), async ( req, res)=>{
     res.setHeader('Content-Type','application/json');
     res.setHeader('Access-Control-Allow-Origin','*');
     res.setHeader('Access-Control-Allow-Headers','X-Requested-With');
-    //const command = 'SELECT * FROM [NODE_SERVER].[dbo].[VBOOK]';
-    console.log(book);
     
+    return res.send(book);
+})
+
+app.get('/cover/:bookname', cors(), async ( req, res)=>{
+    const book = await sqlFunctions.searchCover(req);
+    res.setHeader('Content-Type','application/json');
+    res.setHeader('Access-Control-Allow-Origin','*');
+    res.setHeader('Access-Control-Allow-Headers','X-Requested-With');
+   
     return res.send(book);
 })
 
