@@ -25,8 +25,8 @@ module.exports = {
 
         const bookContent = (await req.app.locals.db.vbook.query(command)).recordset;
 
-        if(bookContent[0] && bookContent[0].vbookContent){
-            return bookContent[0].vbookContent;
+        if(bookContent[0] && bookContent[0].vbookCoverBase64){
+            return bookContent[0].vbookCoverBase64;
         }
         return "Error when searching for book";
         
