@@ -108,12 +108,30 @@ app.get('/book/:bookname', cors(), async ( req, res)=>{
 })
 
 app.get('/cover/:bookname', cors(), async ( req, res)=>{
-    const book = await sqlFunctions.searchCover(req);
+    const cover = await sqlFunctions.searchCover(req);
     res.setHeader('Content-Type','application/json');
     res.setHeader('Access-Control-Allow-Origin','*');
     res.setHeader('Access-Control-Allow-Headers','X-Requested-With');
    
-    return res.send(book);
+    return res.send(cover);
+})
+
+app.get('/fullName/:bookname', cors(), async ( req, res)=>{
+    const fullName = await sqlFunctions.searchFullName(req);
+    res.setHeader('Content-Type','application/json');
+    res.setHeader('Access-Control-Allow-Origin','*');
+    res.setHeader('Access-Control-Allow-Headers','X-Requested-With');
+   
+    return res.send(fullName);
+})
+
+app.get('/style/:bookname', cors(), async ( req, res)=>{
+    const style = await sqlFunctions.searchCover(req);
+    res.setHeader('Content-Type','application/json');
+    res.setHeader('Access-Control-Allow-Origin','*');
+    res.setHeader('Access-Control-Allow-Headers','X-Requested-With');
+   
+    return res.send(style);
 })
 
 app.get('/musicFiles', cors(), ( req, res)=>{
