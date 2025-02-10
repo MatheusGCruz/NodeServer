@@ -126,7 +126,7 @@ app.get('/fullName/:bookname', cors(), async ( req, res)=>{
 })
 
 app.get('/style/:bookname', cors(), async ( req, res)=>{
-    const style = await sqlFunctions.searchCover(req);
+    const style = await sqlFunctions.searchStyle(req);
     res.setHeader('Content-Type','application/json');
     res.setHeader('Access-Control-Allow-Origin','*');
     res.setHeader('Access-Control-Allow-Headers','X-Requested-With');
