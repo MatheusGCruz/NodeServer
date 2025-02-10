@@ -49,7 +49,7 @@ module.exports = {
     searchStyle: async function (req){
         console.log("book:"+ req.params.bookname);
 
-        const command = "SELECT vbookStyle FROM [NODE_SERVER].[dbo].[VBOOK] where vbookName = '"+req.params.bookname+"'";
+        const command = "SELECT CONVERT(NVARCHAR(10),vbookStyle) AS vbookStyle FROM [NODE_SERVER].[dbo].[VBOOK] where vbookName = '"+req.params.bookname+"'";
 
         const bookContent = (await req.app.locals.db.vbook.query(command)).recordset;
 
