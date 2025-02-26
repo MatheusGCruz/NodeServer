@@ -11,7 +11,7 @@ module.exports = {
 
         const vbookName = (await req.app.locals.db.vbook.query(command)).recordset;
         
-        if(vbookName){
+        if(vbookName != null){
             return vbookName;
         }
         return "Error when searching for book";

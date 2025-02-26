@@ -99,7 +99,7 @@ app.get('/videoFiles', cors(), ( req, res)=>{
 })
 
 app.get('/bookList', cors(), async ( req, res)=>{
-    const book = await sqlFunctions.searchBook(req);
+    const book = await sqlFunctions.searchBookList(req);
     res.setHeader('Content-Type','application/json');
     res.setHeader('Access-Control-Allow-Origin','*');
     res.setHeader('Access-Control-Allow-Headers','X-Requested-With');
