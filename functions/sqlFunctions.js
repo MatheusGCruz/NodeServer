@@ -4,6 +4,20 @@ const { dataAccess } = require('./../dataFunctions/dataAccess')
 
 module.exports = {
 
+    searchBookList: async function (req){
+        console.log("book:"+ req.params.bookname);
+
+        const command = "SELECT vbookName FROM [NODE_SERVER].[dbo].[VBOOK]";
+
+        const vbookName = (await req.app.locals.db.vbook.query(command)).recordset;
+        
+        if(vbookName != null){
+            return vbookName;
+        }
+        return "Error when searching for book";
+        
+    }  , 
+
     searchBook: async function (req){
         console.log("book:"+ req.params.bookname);
 
