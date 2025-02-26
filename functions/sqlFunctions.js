@@ -7,12 +7,12 @@ module.exports = {
     searchBookList: async function (req){
         console.log("book:"+ req.params.bookname);
 
-        const command = "SELECT vbookName FROM [NODE_SERVER].[dbo].[VBOOK]";
+        const command = "SELECT vbookName, vbookFullName FROM [NODE_SERVER].[dbo].[VBOOK]";
 
-        const vbookName = (await req.app.locals.db.vbook.query(command)).recordset;
+        const vbook = (await req.app.locals.db.vbook.query(command)).recordset;
         
-        if(vbookName != null){
-            return vbookName;
+        if(vbook != null){
+            return vbook;
         }
         return "Error when searching for book";
         
