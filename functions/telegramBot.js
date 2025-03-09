@@ -11,6 +11,7 @@ const TOKEN = telegramConfig.token;
 const bot = new TelegramBot(TOKEN, { polling: true });
 const outputFolder = telegramConfig.outputFolder;
 const metadataFolder = telegramConfig.metadataFolder;
+const tempFolder = telegramConfig.tempFolder;
 
 const ytdlp = require('yt-dlp-exec');
 let validChatId = false;
@@ -20,8 +21,6 @@ function sanitizeString(str) {
 }
 
 async function downloadAudio(youtubeUrl, chatId) {
-
-
     try {
         if (!fs.existsSync(outputFolder)) {
             fs.mkdirSync(outputFolder, { recursive: true });
@@ -48,7 +47,53 @@ async function downloadAudio(youtubeUrl, chatId) {
             if (error) {
                 bot.sendMessage(chatId, `Error: ${error.message}`);
             } else {
-                bot.sendMessage(chatId, `Download complete! File ${metadata.title} saved to C:/music.`);
+                bot.sendMessage(chatId, `Download complete! Sending file...`);
+                bot.sendAudio(chatId, mp3FilePath).then(() => {
+                    fs.unlinkSync(mp3FilePath);
+                });
+
+                fs.unlink(mp3FilePath, (unlinkError) => {
+                    if (unlinkError) {
+                        console.error("Error deleting file:", unlinkError);
+                    } else {
+                        console.log("File deleted successfully:", mp3FilePath);
+                    }
+                });
+            }
+        });
+    } catch (error) {
+        bot.sendMessage(chatId, `Error: ${error.message}`);
+    }
+}
+
+async function saveAudio(youtubeUrl, chatId) {
+    try {
+        if (!fs.existsSync(outputFolder)) {
+            fs.mkdirSync(outputFolder, { recursive: true });
+        }
+        if (!fs.existsSync(metadataFolder)) {
+            fs.mkdirSync(metadataFolder, { recursive: true });
+        }
+
+        const videoId = new URL(youtubeUrl).searchParams.get('v');
+
+        const metadata = await ytdlp(youtubeUrl, {
+            dumpSingleJson: true,
+        });
+        
+        console.log(metadata.title);
+        
+        const mp3FilePath = path.join(outputFolder, `${sanitizeString(metadata.title)}.mp3`);
+        const metadataFilePath = path.join(metadataFolder, `${sanitizeString(metadata.title)}.txt`);
+
+
+        fs.writeFileSync(metadataFilePath, JSON.stringify(metadata, null, 2));
+
+        exec(`yt-dlp -x --audio-format mp3 -o "${mp3FilePath}" "${youtubeUrl}"`, (error) => {
+            if (error) {
+                bot.sendMessage(chatId, `Error: ${error.message}`);
+            } else {
+                bot.sendMessage(chatId, `Download complete! File ${metadata.title} saved to ${mp3FilePath}`);
             }
         });
     } catch (error) {
@@ -67,18 +112,21 @@ function startBot() {
             }
         });
     
-        if(validChatId){
-
-        
-        if (ytdl.validateURL(youtubeUrl)) {
-            bot.sendMessage(chatId, 'Downloading audio, please wait...');
-            downloadAudio(youtubeUrl, chatId);
-        } else {
-            bot.sendMessage(chatId, 'Invalid YouTube URL. Please send a valid link.');
+        if(validChatId){        
+            if (ytdl.validateURL(youtubeUrl)) {
+                bot.sendMessage(chatId, 'Downloading audio, please wait...');
+                saveAudio(youtubeUrl, chatId);
+            } else {
+                bot.sendMessage(chatId, 'Invalid YouTube URL. Please send a valid link.');
+            }
         }
-    }
         else{
-            bot.sendMessage(chatId, `Invalid chat. Register and try again later.`);
+            if (ytdl.validateURL(youtubeUrl)) {
+                bot.sendMessage(chatId, 'Downloading audio, please wait...');
+                downloadAudio(youtubeUrl, chatId);
+            } else {
+                bot.sendMessage(chatId, 'Invalid YouTube URL. Please send a valid link.');
+            }
         }
     });
 }
