@@ -22,11 +22,8 @@ function sanitizeString(str) {
 
 async function downloadAudio(youtubeUrl, chatId) {
     try {
-        if (!fs.existsSync(outputFolder)) {
-            fs.mkdirSync(outputFolder, { recursive: true });
-        }
-        if (!fs.existsSync(metadataFolder)) {
-            fs.mkdirSync(metadataFolder, { recursive: true });
+        if (!fs.existsSync(tempFolder)) {
+            fs.mkdirSync(tempFolder, { recursive: true });
         }
 
         const videoId = new URL(youtubeUrl).searchParams.get('v');
@@ -37,11 +34,7 @@ async function downloadAudio(youtubeUrl, chatId) {
         
         console.log(metadata.title);
         
-        const mp3FilePath = path.join(outputFolder, `${sanitizeString(metadata.title)}.mp3`);
-        const metadataFilePath = path.join(metadataFolder, `${sanitizeString(metadata.title)}.txt`);
-
-
-        fs.writeFileSync(metadataFilePath, JSON.stringify(metadata, null, 2));
+        const mp3FilePath = path.join(tempFolder, `${sanitizeString(metadata.title)}.mp3`);
 
         exec(`yt-dlp -x --audio-format mp3 -o "${mp3FilePath}" "${youtubeUrl}"`, (error) => {
             if (error) {
@@ -50,14 +43,6 @@ async function downloadAudio(youtubeUrl, chatId) {
                 bot.sendMessage(chatId, `Download complete! Sending file...`);
                 bot.sendAudio(chatId, mp3FilePath).then(() => {
                     fs.unlinkSync(mp3FilePath);
-                });
-
-                fs.unlink(mp3FilePath, (unlinkError) => {
-                    if (unlinkError) {
-                        console.error("Error deleting file:", unlinkError);
-                    } else {
-                        console.log("File deleted successfully:", mp3FilePath);
-                    }
                 });
             }
         });
