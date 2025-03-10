@@ -22,8 +22,8 @@ function sanitizeString(str) {
 
 async function downloadAudio(youtubeUrl, chatId) {
     try {
-        if (!fs.existsSync(outputFolder)) {
-            fs.mkdirSync(outputFolder, { recursive: true });
+        if (!fs.existsSync(tempFolder)) {
+            fs.mkdirSync(tempFolder, { recursive: true });
         }
         if (!fs.existsSync(metadataFolder)) {
             fs.mkdirSync(metadataFolder, { recursive: true });
@@ -37,9 +37,7 @@ async function downloadAudio(youtubeUrl, chatId) {
         
         console.log(metadata.title);
         
-        const mp3FilePath = path.join(outputFolder, `${sanitizeString(metadata.title)}.mp3`);
-        const metadataFilePath = path.join(metadataFolder, `${sanitizeString(metadata.title)}.txt`);
-
+        const mp3FilePath = path.join(tempFolder, `${sanitizeString(metadata.title)}.mp3`);
 
         fs.writeFileSync(metadataFilePath, JSON.stringify(metadata, null, 2));
 
