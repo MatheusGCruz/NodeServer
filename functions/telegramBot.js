@@ -57,6 +57,7 @@ async function downloadAudio(youtubeUrl, chatId) {
                         console.log("File deleted successfully:", mp3FilePath);
                     }
                 });
+                insertNewDownload(chatId, sanitizeString(metadata.title));
             }
         });
     } catch (error) {
@@ -92,6 +93,7 @@ async function saveAudio(youtubeUrl, chatId) {
                 bot.sendMessage(chatId, `Error: ${error.message}`);
             } else {
                 bot.sendMessage(chatId, `Download complete! File ${metadata.title} saved to ${mp3FilePath}`);
+                insertNewDownload(chatId, sanitizeString(metadata.title));
             }
         });
     } catch (error) {

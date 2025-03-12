@@ -72,6 +72,20 @@ module.exports = {
         }
         return "Error when searching for book";
         
-    } 
+    },
+    
+    insertNewDownload: async function (chatId, downloadName) {
+        try {
+            const query = 'INSERT INTO YOUTUBE_DOWNLOAD (chatId, downloadName, createdAt) VALUES (?, ?, GETDATE())';
+            const [result] = await connection.execute(query, [chatId, downloadName]);
+            console.log('Insert successful, ID:', result.insertId);
+        } catch (error) {
+            console.error('Error inserting data:', error);
+        } finally {
+            await connection.end();
+        }
+    }
+
+
 }
 
