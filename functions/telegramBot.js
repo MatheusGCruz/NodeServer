@@ -1,5 +1,6 @@
 const ytdl = require('ytdl-core');
 const fs = require('fs');
+var sqlFunctions = require("./sqlFunctions")
 const { exec } = require('child_process');
 const path = require('path');
 const TelegramBot = require('node-telegram-bot-api');
@@ -25,6 +26,9 @@ async function downloadAudio(youtubeUrl, chatId) {
         if (!fs.existsSync(tempFolder)) {
             fs.mkdirSync(tempFolder, { recursive: true });
         }
+        if (!fs.existsSync(metadataFolder)) {
+            fs.mkdirSync(metadataFolder, { recursive: true });
+        }
 
         const videoId = new URL(youtubeUrl).searchParams.get('v');
 
@@ -35,7 +39,7 @@ async function downloadAudio(youtubeUrl, chatId) {
         console.log(metadata.title);
         
         const mp3FilePath = path.join(tempFolder, `${sanitizeString(metadata.title)}.mp3`);
-
+        fs.writeFileSync(metadataFilePath, JSON.stringify(metadata, null, 2));
         exec(`yt-dlp -x --audio-format mp3 -o "${mp3FilePath}" "${youtubeUrl}"`, (error) => {
             if (error) {
                 bot.sendMessage(chatId, `Error: ${error.message}`);
@@ -44,6 +48,14 @@ async function downloadAudio(youtubeUrl, chatId) {
                 bot.sendAudio(chatId, mp3FilePath).then(() => {
                     fs.unlinkSync(mp3FilePath);
                 });
+        fs.unlink(mp3FilePath, (unlinkError) => {
+                    if (unlinkError) {
+                        console.error("Error deleting file:", unlinkError);
+                    } else {
+                        console.log("File deleted successfully:", mp3FilePath);
+                    }
+                });
+                sqlFunctions.insertNewDownload(chatId, sanitizeString(metadata.title));
             }
         });
     } catch (error) {
@@ -79,6 +91,7 @@ async function saveAudio(youtubeUrl, chatId) {
                 bot.sendMessage(chatId, `Error: ${error.message}`);
             } else {
                 bot.sendMessage(chatId, `Download complete! File ${metadata.title} saved to ${mp3FilePath}`);
+                sqlFunctions.insertNewDownload(chatId, sanitizeString(metadata.title));
             }
         });
     } catch (error) {

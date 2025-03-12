@@ -2,6 +2,7 @@ var sqlFunctions = require("./functions/sqlFunctions")
 const getDataConfig = require('./dataFunctions/dataConfig')
 const { dataAccess } = require('./dataFunctions/dataAccess')
 const { startBot } = require('./functions/telegramBot');
+const {recognizeText} = require('./functions/ocrFunctions');
 
 const express = require('express')
 const fs = require('fs')
@@ -194,5 +195,6 @@ app.listen(3015, ()=>{
 
     console.log('server started');
     startBot();
+    //recognizeText();
     console.log('bot started');
 })
