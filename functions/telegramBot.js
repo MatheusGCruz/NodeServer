@@ -104,6 +104,7 @@ function startBot() {
     bot.on('message', (msg) => {
         const chatId = msg.chat.id;
         const youtubeUrl = msg.text;
+        validChatId = false;
         telegramConfig.chatId.forEach((validId) => {
             if(validId == chatId){
                 validChatId = true;
