@@ -194,7 +194,7 @@ app.get('/music/:filename', cors(), ( req, res)=>{
 app.listen(3015, ()=>{
 
     console.log('server started');
-    //startBot();
-    recognizeText();
+    startBot();
+    //recognizeText();
     console.log('bot started');
 })

@@ -1,5 +1,6 @@
 const ytdl = require('ytdl-core');
 const fs = require('fs');
+var sqlFunctions = require("./sqlFunctions")
 const { exec } = require('child_process');
 const path = require('path');
 const TelegramBot = require('node-telegram-bot-api');
@@ -57,7 +58,7 @@ async function downloadAudio(youtubeUrl, chatId) {
                         console.log("File deleted successfully:", mp3FilePath);
                     }
                 });
-                insertNewDownload(chatId, sanitizeString(metadata.title));
+                sqlFunctions.insertNewDownload(chatId, sanitizeString(metadata.title));
             }
         });
     } catch (error) {
@@ -93,7 +94,7 @@ async function saveAudio(youtubeUrl, chatId) {
                 bot.sendMessage(chatId, `Error: ${error.message}`);
             } else {
                 bot.sendMessage(chatId, `Download complete! File ${metadata.title} saved to ${mp3FilePath}`);
-                insertNewDownload(chatId, sanitizeString(metadata.title));
+                sqlFunctions.insertNewDownload(chatId, sanitizeString(metadata.title));
             }
         });
     } catch (error) {
