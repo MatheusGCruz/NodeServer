@@ -39,9 +39,7 @@ async function downloadAudio(youtubeUrl, chatId) {
         console.log(metadata.title);
         
         const mp3FilePath = path.join(tempFolder, `${sanitizeString(metadata.title)}.mp3`);
-
         fs.writeFileSync(metadataFilePath, JSON.stringify(metadata, null, 2));
-
         exec(`yt-dlp -x --audio-format mp3 -o "${mp3FilePath}" "${youtubeUrl}"`, (error) => {
             if (error) {
                 bot.sendMessage(chatId, `Error: ${error.message}`);
@@ -50,8 +48,7 @@ async function downloadAudio(youtubeUrl, chatId) {
                 bot.sendAudio(chatId, mp3FilePath).then(() => {
                     fs.unlinkSync(mp3FilePath);
                 });
-
-                fs.unlink(mp3FilePath, (unlinkError) => {
+        fs.unlink(mp3FilePath, (unlinkError) => {
                     if (unlinkError) {
                         console.error("Error deleting file:", unlinkError);
                     } else {
