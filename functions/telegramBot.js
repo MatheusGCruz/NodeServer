@@ -44,7 +44,8 @@ async function downloadAudio(youtubeUrl, chatId) {
         fs.writeFileSync(metadataFilePath, JSON.stringify(metadata, null, 2));
         exec(`yt-dlp -x --audio-format mp3 -o "${mp3FilePath}" "${youtubeUrl}"`, (error) => {
             if (error) {
-                bot.sendMessage(chatId, `Error: ${error.message}`);
+                bot.sendMessage(telegramConfig.masterChatId,  `ChatId:${chatId} -  Error: ${error.message}`);
+                bot.sendMessage(chatId, `Error on download. A message was sended to the admin.`);
             } else {
                 bot.sendMessage(chatId, `Download complete! Sending file...`);
                 bot.sendAudio(chatId, mp3FilePath).then(() => {
@@ -61,7 +62,8 @@ async function downloadAudio(youtubeUrl, chatId) {
             }
         });
     } catch (error) {
-        bot.sendMessage(chatId, `Error: ${error.message}`);
+        bot.sendMessage(telegramConfig.masterChatId,  `ChatId:${chatId} -  Error: ${error.message}`);
+        bot.sendMessage(chatId, `Error on download. A message was sended to the admin.`);
     }
 }
 
@@ -90,14 +92,16 @@ async function saveAudio(youtubeUrl, chatId) {
 
         exec(`yt-dlp -x --audio-format mp3 -o "${mp3FilePath}" "${youtubeUrl}"`, (error) => {
             if (error) {
-                bot.sendMessage(chatId, `Error: ${error.message}`);
+                bot.sendMessage(telegramConfig.masterChatId,  `ChatId:${chatId} -  Error: ${error.message}`);
+                bot.sendMessage(chatId, `Error on download. A message was sended to the admin.`);
             } else {
                 bot.sendMessage(chatId, `Download complete! File ${metadata.title} saved to ${mp3FilePath}`);
                 sqlFunctions.insertNewDownload(chatId, sanitizeString(metadata.title));
             }
         });
     } catch (error) {
-        bot.sendMessage(chatId, `Error: ${error.message}`);
+        bot.sendMessage(telegramConfig.masterChatId,  `ChatId:${chatId} -  Error: ${error.message}`);
+        bot.sendMessage(chatId, `Error on download. A message was sended to the admin.`);
     }
 }
 
