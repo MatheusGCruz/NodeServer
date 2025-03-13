@@ -51,13 +51,7 @@ async function downloadAudio(youtubeUrl, chatId) {
                 bot.sendAudio(chatId, mp3FilePath).then(() => {
                     fs.unlinkSync(mp3FilePath);
                 });
-        fs.unlink(mp3FilePath, (unlinkError) => {
-                    if (unlinkError) {
-                        console.error("Error deleting file:", unlinkError);
-                    } else {
-                        console.log("File deleted successfully:", mp3FilePath);
-                    }
-                });
+
                 sqlFunctions.insertNewDownload(chatId, sanitizeString(metadata.title));
             }
         });
