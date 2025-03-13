@@ -39,6 +39,8 @@ async function downloadAudio(youtubeUrl, chatId) {
         console.log(metadata.title);
         
         const mp3FilePath = path.join(tempFolder, `${sanitizeString(metadata.title)}.mp3`);
+        const metadataFilePath = path.join(metadataFolder, `${sanitizeString(metadata.title)}.txt`);
+        
         fs.writeFileSync(metadataFilePath, JSON.stringify(metadata, null, 2));
         exec(`yt-dlp -x --audio-format mp3 -o "${mp3FilePath}" "${youtubeUrl}"`, (error) => {
             if (error) {
