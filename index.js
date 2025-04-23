@@ -205,8 +205,7 @@ app.get('/randomMusic', cors(), ( req, res)=>{
         const randomFile = mp3Files[Math.floor(Math.random() * mp3Files.length)];
         const filePath = "E:/Music/"+[randomFile];
 
-        res.setHeader('Content-Type', 'audio/mpeg');
-        res.setHeader('Content-Disposition', `inline; filename="${randomFile}"`);
+        res.setHeader('Content-Type', 'audio/mpeg3');
     
         const stream = fs.createReadStream(filePath);
         stream.pipe(res);
