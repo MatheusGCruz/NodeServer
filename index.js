@@ -6,6 +6,8 @@ const { startBot } = require('./functions/telegramBot');
 const express = require('express')
 const fs = require('fs')
 const cors = require('cors')
+const path = require('path');
+
 
 const app = express()
 
@@ -201,8 +203,8 @@ app.get('/randomMusic', cors(), ( req, res)=>{
         }
     
         const randomFile = mp3Files[Math.floor(Math.random() * mp3Files.length)];
-        const filePath = path.join(musicDir, randomFile);
-    
+        const filePath = "E:/Music/"+[randomFile];
+
         res.setHeader('Content-Type', 'audio/mpeg');
         res.setHeader('Content-Disposition', `inline; filename="${randomFile}"`);
     
