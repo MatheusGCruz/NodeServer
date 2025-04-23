@@ -1,6 +1,8 @@
 const { dataAccess } = require('./../dataFunctions/dataAccess')
+const getDataConfig = require('./../dataFunctions/dataConfig')
+const sql = require('mssql');
 
-
+const dataConfig = getDataConfig()
 
 module.exports = {
 
@@ -72,6 +74,25 @@ module.exports = {
         }
         return "Error when searching for book";
         
-    } 
+    },
+    
+    insertNewDownload: async function (chatId, downloadName) {
+        try {
+            const pool = await sql.connect(dataConfig.youtubeDownload.config);
+            const result = await pool.request()
+                .input('chatId', sql.VarChar, chatId.toString())
+                .input('downloadName', sql.VarChar, downloadName)
+                .query('INSERT INTO YOUTUBE_DOWNLOAD (chatId, downloadName, createdAt) VALUES (@chatId, @downloadName, GETDATE())');
+    
+           // console.log('Insert successful, rows affected:', result.rowsAffected[0]);
+        } catch (error) {
+            console.error('Error inserting data:', error);
+        } finally {
+            await sql.close();
+        }
+
+    }
+
+
 }
 
