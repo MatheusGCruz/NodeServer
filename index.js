@@ -203,7 +203,7 @@ app.get('/randomMusic', cors(), ( req, res)=>{
         }
     
         const filename = mp3Files[Math.floor(Math.random() * mp3Files.length)];
-        const filePath = "E:/Music/"+[randomFile];
+        const filePath = "E:/Music/"+[filename];
 
     if(!filename || !filePath || filename == 'null'){
         return res.status(404).send('Not Found')
