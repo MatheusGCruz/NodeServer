@@ -189,6 +189,29 @@ app.get('/music/:filename', cors(), ( req, res)=>{
     }
 })
 
+app.get('/randomMusic', cors(), ( req, res)=>{
+    fs.readdir('E:/Music/', (err, files) => {
+        if (err) {
+          return res.status(500).send('Failed to read music folder');
+        }
+    
+        const mp3Files = files.filter(file => path.extname(file).toLowerCase() === '.mp3');
+        if (mp3Files.length === 0) {
+          return res.status(404).send('No MP3 files found');
+        }
+    
+        const randomFile = mp3Files[Math.floor(Math.random() * mp3Files.length)];
+        const filePath = path.join(musicDir, randomFile);
+    
+        res.setHeader('Content-Type', 'audio/mpeg');
+        res.setHeader('Content-Disposition', `inline; filename="${randomFile}"`);
+    
+        const stream = fs.createReadStream(filePath);
+        stream.pipe(res);
+        
+      });
+})
+
 
 app.listen(3015, ()=>{
 
