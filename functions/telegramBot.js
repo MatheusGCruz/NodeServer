@@ -103,7 +103,7 @@ async function saveAudio(youtubeUrl, chatId) {
 function startBot() {
     bot.on('message', (msg) => {
         const chatId = msg.chat.id;
-        const youtubeUrl = msg.text;
+        const youtubeUrl = msg.text.split("&")[0];
         validChatId = false;
         telegramConfig.chatId.forEach((validId) => {
             if(validId == chatId){
