@@ -4,6 +4,7 @@ const { dataAccess } = require('./dataFunctions/dataAccess')
 const { startBot } = require('./functions/telegramBot');
 const {recognizeText} = require('./functions/ocrFunctions');
 const {downloadAudio, getTitle} = require('./functions/youtube')
+const {clearDownloadDirectory, clearMetadataDirectory} = require('./functions/directoryClean')
 
 const express = require('express')
 const fs = require('fs')
@@ -289,6 +290,8 @@ app.get('/randomMusic', cors(), ( req, res)=>{
 app.listen(3015, ()=>{
 
     console.log('server started');
+    clearDownloadDirectory();
+    clearMetadataDirectory();
     startBot();
     //recognizeText();
     console.log('bot started');
