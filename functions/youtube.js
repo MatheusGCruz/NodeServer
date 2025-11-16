@@ -16,7 +16,14 @@ const tempFolder = telegramConfig.tempFolder;
 const ytdlp = require('yt-dlp-exec');
 
 function sanitizeString(str) {
-    return str.replace(/[^a-zA-Z0-9\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/g, '-');
+    return str.replace(/[^a-zA-Z0-9\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+    .replace(/[\r\n]/g, '')             
+    .replace(/["']/g, '')               
+    .replace(/[<>:;?*|/\\]/g, '')       
+    .replace(/[\u3000-\u303F\uFF00-\uFFEF]/g, '-') 
+    .replace(/\s+/g, '-');              
 }
 
 async function getTitle(videoId){

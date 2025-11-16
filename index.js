@@ -222,7 +222,8 @@ app.get('/youtube/:videoId', cors(), async ( req, res)=>{
         // fs.unlinkSync(filePath);
     }
     else{
-        const fileName = `${title}.mp3`;
+        const fileName = `${title.replace(/[\r\n]/g, '').replace(/[^\x20-\x7E]/g, '')}.mp3`;
+        console.log("header:"+title);
         res.setHeader("Content-Type", "audio/mpeg");
         res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
         // res.writeHead(200, head);
