@@ -59,7 +59,7 @@ async function downloadAudio(videoId, title) {
             }
         const metadataFilePath = path.join(metadataFolder, `${title}.txt`);      
         fs.writeFileSync(metadataFilePath, JSON.stringify(metadata, null, 2));
-        console.log("writeFile");
+        sqlFunctions.insertNewDownload("Direct Download", sanitizeString(metadata.title));
 
         await run(mp3FilePath, youtubeUrl);
     } catch (error) {
