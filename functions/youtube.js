@@ -3,6 +3,9 @@ const fs = require('fs');
 var sqlFunctions = require("./sqlFunctions")
 const { exec } = require('child_process');
 const path = require('path');
+const getTelegramConfig = require('./../dataFunctions/telegramConfig')
+
+const telegramConfig = getTelegramConfig()
 
 const metadataFolder = telegramConfig.metadataFolder;
 const tempFolder = telegramConfig.tempFolder;
