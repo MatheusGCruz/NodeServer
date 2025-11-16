@@ -6,6 +6,7 @@ const { promisify } = require('util');
 
 const path = require('path');
 const getTelegramConfig = require('./../dataFunctions/telegramConfig')
+const execAsync = promisify(exec);
 
 const telegramConfig = getTelegramConfig()
 
@@ -18,7 +19,19 @@ function sanitizeString(str) {
     return str.replace(/[^a-zA-Z0-9\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/g, '-');
 }
 
-async function downloadAudio(videoId) {
+async function getTitle(videoId){
+    try{
+    const youtubeUrl = "https://www.youtube.com/watch?v="+videoId;
+    const metadata = await ytdlp(youtubeUrl, {
+        dumpSingleJson: true,
+    });    
+    return sanitizeString(metadata.title);}
+    catch(error){
+        console.log("Title error: "+ error);
+    }
+}
+
+async function downloadAudio(videoId, title) {
     var mp3FilePath = 'null';
     try {
         const youtubeUrl = "https://www.youtube.com/watch?v="+videoId;
@@ -28,31 +41,20 @@ async function downloadAudio(videoId) {
         if (!fs.existsSync(metadataFolder)) {
             fs.mkdirSync(metadataFolder, { recursive: true });
         }
-
         const metadata = await ytdlp(youtubeUrl, {
             dumpSingleJson: true,
-        });
-        
-        console.log(metadata.title);
-        
-        mp3FilePath = path.join(tempFolder, `${sanitizeString(metadata.title)}.mp3`);
-        console.log(mp3FilePath);
-        const metadataFilePath = path.join(metadataFolder, `${sanitizeString(metadata.title)}.txt`);
-        console.log(metadataFilePath);
-        
+        });    
+        mp3FilePath = path.join(tempFolder, `${title}.mp3`);
+            try{
+                fs.unlinkSync(filePath);
+            }catch(error){
+                console.log("file do not exists");
+            }
+        const metadataFilePath = path.join(metadataFolder, `${title}.txt`);      
         fs.writeFileSync(metadataFilePath, JSON.stringify(metadata, null, 2));
         console.log("writeFile");
-        const execAsync = promisify(exec);
-        await execAsync(`yt-dlp -x --audio-format mp3 -o "${mp3FilePath}" "${youtubeUrl}"`, (error) => {
-            if (error) {
-                console.log("if error - "+ error);
-   
-            } else {
-                sqlFunctions.insertNewDownload("directDownload", sanitizeString(metadata.title));
-                console.log("Filepath:"+mp3FilePath.toString());
-            }
-        });
-        console.log("exec");
+
+        await run(mp3FilePath, youtubeUrl);
     } catch (error) {
         console.log("Catch error -"+error);
         return 'null';
@@ -62,4 +64,14 @@ async function downloadAudio(videoId) {
 }
 
 
-module.exports = { downloadAudio };
+
+async function run(mp3FilePath, youtubeUrl) {
+  try {
+    const { stdout, stderr } = await execAsync(`yt-dlp -x --audio-format mp3 -o "${mp3FilePath}" "${youtubeUrl}"`);
+    console.log("done:", stdout);
+  } catch (err) {
+    console.error("command failed:", err);
+  }
+}
+
+module.exports = { downloadAudio , getTitle};

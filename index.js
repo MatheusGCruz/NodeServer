@@ -3,7 +3,7 @@ const getDataConfig = require('./dataFunctions/dataConfig')
 const { dataAccess } = require('./dataFunctions/dataAccess')
 const { startBot } = require('./functions/telegramBot');
 const {recognizeText} = require('./functions/ocrFunctions');
-const {downloadAudio} = require('./functions/youtube')
+const {downloadAudio, getTitle} = require('./functions/youtube')
 
 const express = require('express')
 const fs = require('fs')
@@ -193,19 +193,16 @@ app.get('/music/:filename', cors(), ( req, res)=>{
     }
 })
 
-app.get('/youtube/', cors(), async ( req, res)=>{
-    const videoId = "cAeNwWHet3E";//req.params.videoId;
-    const filePath =  await downloadAudio(videoId); 
-    console.log(videoId);
-    console.log(filePath);
+app.get('/youtube/:videoId', cors(), async ( req, res)=>{
+    const videoId = req.params.videoId;
+    const title = await getTitle(videoId);
+    const filePath =  await downloadAudio(videoId, title); 
     if(!videoId || !filePath || videoId == 'null'){
         return res.status(404).send('Not Found')
     }
-
     const stat = fs.statSync(filePath);
     const fileSize = stat.size;
     const range = req.headers.range;
-    console.log("1");
     if(range){
         const parts = range.replace(/bytes=/,'').split('-')
         const start = parseInt(parts[0], 10);
@@ -221,25 +218,17 @@ app.get('/youtube/', cors(), async ( req, res)=>{
         }
         res.writeHead(206, head);
         file.pipe(res);
+        // fs.unlinkSync(filePath);
     }
     else{
-        console.log("2");
-        const head = {
-            'Content-Length':fileSize,
-            'Content-Type':'audio/mpeg3'
-        };
-        res.writeHead(200, head);
+        const fileName = `${title}.mp3`;
+        res.setHeader("Content-Type", "audio/mpeg");
+        res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
+        // res.writeHead(200, head);
         fs.createReadStream(filePath).pipe(res);
+        // fs.unlinkSync(filePath);
     }
-    fs.unlinkSync(filePath);
-})
-
-app.get('/youtubetest/:test', cors(), ( req, res)=>{
-    const files = fs.readdirSync('E:/Music/');
-    res.setHeader('Content-Type','application/json');
-    res.setHeader('Access-Control-Allow-Origin','*');
-    res.setHeader('Access-Control-Allow-Headers','X-Requested-With');
-    return res.send(req.params.test);
+    //fs.unlinkSync(filePath);
 })
 
 app.get('/randomMusic', cors(), ( req, res)=>{
