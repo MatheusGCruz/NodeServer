@@ -3,6 +3,7 @@ const getDataConfig = require('./dataFunctions/dataConfig')
 const { dataAccess } = require('./dataFunctions/dataAccess')
 const { startBot } = require('./functions/telegramBot');
 const {recognizeText} = require('./functions/ocrFunctions');
+const {downloadAudio, getTitle} = require('./functions/youtube')
 
 const express = require('express')
 const fs = require('fs')
@@ -192,6 +193,44 @@ app.get('/music/:filename', cors(), ( req, res)=>{
     }
 })
 
+app.get('/youtube/:videoId', cors(), async ( req, res)=>{
+    const videoId = req.params.videoId;
+    const title = await getTitle(videoId);
+    const filePath =  await downloadAudio(videoId, title); 
+    if(!videoId || !filePath || videoId == 'null'){
+        return res.status(404).send('Not Found')
+    }
+    const stat = fs.statSync(filePath);
+    const fileSize = stat.size;
+    const range = req.headers.range;
+    if(range){
+        const parts = range.replace(/bytes=/,'').split('-')
+        const start = parseInt(parts[0], 10);
+        const end = parts[1] ? parseInt(parts[1], 10): fileSize - 1;
+
+        const chunkSize = end - start +1;
+        const file = fs.createReadStream(filePath, {start, end});
+        const head = {
+            'Content-Range': 'bytes '+start+'-'+end+'/'+fileSize,
+            'Accept-Ranges': 'bytes',
+            'Content-Length':chunkSize,
+            'Content-Type':'audio/mpeg3'
+        }
+        res.writeHead(206, head);
+        file.pipe(res);
+        // fs.unlinkSync(filePath);
+    }
+    else{
+        const fileName = `${title}.mp3`;
+        res.setHeader("Content-Type", "audio/mpeg");
+        res.setHeader("Content-Disposition", `attachment; filename="${fileName}"`);
+        // res.writeHead(200, head);
+        fs.createReadStream(filePath).pipe(res);
+        // fs.unlinkSync(filePath);
+    }
+    //fs.unlinkSync(filePath);
+})
+
 app.get('/randomMusic', cors(), ( req, res)=>{
     fs.readdir('E:/Music/', (err, files) => {
         if (err) {
@@ -238,7 +277,13 @@ app.get('/randomMusic', cors(), ( req, res)=>{
         res.writeHead(200, head);
         fs.createReadStream(filePath).pipe(res);
     }
-});
+})
+
+
+
+
+;
+
 })
 
 app.listen(3015, ()=>{
