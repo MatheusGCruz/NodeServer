@@ -2,6 +2,8 @@ const ytdl = require('ytdl-core');
 const fs = require('fs');
 var sqlFunctions = require("./sqlFunctions")
 const { exec } = require('child_process');
+const { promisify } = require('util');
+
 const path = require('path');
 const getTelegramConfig = require('./../dataFunctions/telegramConfig')
 
@@ -17,6 +19,7 @@ function sanitizeString(str) {
 }
 
 async function downloadAudio(videoId) {
+    var mp3FilePath = 'null';
     try {
         const youtubeUrl = "https://www.youtube.com/watch?v="+videoId;
         if (!fs.existsSync(tempFolder)) {
@@ -32,21 +35,29 @@ async function downloadAudio(videoId) {
         
         console.log(metadata.title);
         
-        const mp3FilePath = path.join(tempFolder, `${sanitizeString(metadata.title)}.mp3`);
+        mp3FilePath = path.join(tempFolder, `${sanitizeString(metadata.title)}.mp3`);
+        console.log(mp3FilePath);
         const metadataFilePath = path.join(metadataFolder, `${sanitizeString(metadata.title)}.txt`);
+        console.log(metadataFilePath);
         
         fs.writeFileSync(metadataFilePath, JSON.stringify(metadata, null, 2));
-        exec(`yt-dlp -x --audio-format mp3 -o "${mp3FilePath}" "${youtubeUrl}"`, (error) => {
+        console.log("writeFile");
+        const execAsync = promisify(exec);
+        await execAsync(`yt-dlp -x --audio-format mp3 -o "${mp3FilePath}" "${youtubeUrl}"`, (error) => {
             if (error) {
-                return 'null';
-                
+                console.log("if error - "+ error);
+   
             } else {
                 sqlFunctions.insertNewDownload("directDownload", sanitizeString(metadata.title));
-                return mp3FilePath;
+                console.log("Filepath:"+mp3FilePath.toString());
             }
         });
+        console.log("exec");
     } catch (error) {
+        console.log("Catch error -"+error);
         return 'null';
+    }finally{
+        return mp3FilePath;
     }
 }
 
