@@ -241,10 +241,10 @@ app.get('/randomMusic', cors(), ( req, res)=>{
     }
 })
 
-app.get('/youtube/:videoUrl', cors(), ( req, res)=>{
-    const youtubeUrl = req.params.videoUrl;
-    const filePath =  downloadAudio(youtubeUrl); 
-    if(!youtubeUrl || !filePath || youtubeUrl == 'null'){
+app.get('/youtube/:videoId', cors(), ( req, res)=>{
+    const videoId = req.params.videoId;
+    const filePath =  downloadAudio(videoId); 
+    if(!videoId || !filePath || videoId == 'null'){
         return res.status(404).send('Not Found')
     }
 

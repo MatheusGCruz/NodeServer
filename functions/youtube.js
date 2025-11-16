@@ -16,8 +16,9 @@ function sanitizeString(str) {
     return str.replace(/[^a-zA-Z0-9\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/g, '-');
 }
 
-async function downloadAudio(youtubeUrl) {
+async function downloadAudio(videoId) {
     try {
+        const youtubeUrl = "https://www.youtube.com/watch?v="+videoId;
         if (!fs.existsSync(tempFolder)) {
             fs.mkdirSync(tempFolder, { recursive: true });
         }
